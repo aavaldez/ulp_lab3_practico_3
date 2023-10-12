@@ -1,6 +1,7 @@
 package com.a2valdez.ulp_lab3_practico_3.request;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.a2valdez.ulp_lab3_practico_3.model.Usuario;
@@ -18,6 +19,8 @@ import java.io.ObjectOutputStream;
 public class ApiClient {
 
     public static void guardar(Context context, Usuario usuario){
+        Log.d("salida", usuario.toString());
+        Log.d("salida", context.getFilesDir().toString());
         File archivo = new File(context.getFilesDir(), "usuario.dat");
         try {
             FileOutputStream fos = new FileOutputStream(archivo);
@@ -29,7 +32,8 @@ public class ApiClient {
         } catch (FileNotFoundException e) {
             Toast.makeText(context,"Error al guardar", Toast.LENGTH_LONG).show();
         } catch (IOException io){
-            Toast.makeText(context,"Error de E/S",Toast.LENGTH_LONG).show();
+            io.printStackTrace();
+            Toast.makeText(context,"Error de E/S "+io.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -44,6 +48,7 @@ public class ApiClient {
             BufferedInputStream bis = new BufferedInputStream(fis);
             ObjectInputStream ois = new ObjectInputStream(bis);
             usuario = (Usuario)ois.readObject();
+            Log.d("salida", usuario.toString());
             ois.close();
             fis.close();
         } catch (FileNotFoundException e) {

@@ -1,8 +1,11 @@
 package com.a2valdez.ulp_lab3_practico_3;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -17,11 +20,11 @@ import com.a2valdez.ulp_lab3_practico_3.model.Usuario;
 
 import static android.Manifest.permission.CAMERA;
 
+import java.io.File;
+
 public class RegistroActivity extends AppCompatActivity {
 
     private RegistroActivityViewModel mv;
-
-    private Usuario usuarioActual = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +46,7 @@ public class RegistroActivity extends AppCompatActivity {
                 }
             }
         });
+
         Intent intent = getIntent();
         int i = (int)intent.getIntExtra("flag", 0);
         if( i == 1){
@@ -60,6 +64,13 @@ public class RegistroActivity extends AppCompatActivity {
             }
         });
 
+        mv.getMFoto().observe(this, new Observer<Bitmap>() {
+            @Override
+            public void onChanged(Bitmap bitmap) {
+                binding.ivPerfil.setImageBitmap(bitmap);
+            }
+        });
+
         binding.btTomarFoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,18 +81,12 @@ public class RegistroActivity extends AppCompatActivity {
                 }
             }
         });
-
-        mv.getMFoto().observe(this, new Observer<Bitmap>() {
-            @Override
-            public void onChanged(Bitmap bitmap) {
-                binding.ivPerfil.setImageBitmap(bitmap);
-            }
-        });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        mv.respuestaCamara(requestCode, resultCode, data, 1, usuarioActual);
+        Log.d("salida", requestCode+" "+resultCode+" "+data.toString());
+        mv.respuestaCamara(requestCode, resultCode, data, 1);
     }
 }

@@ -2,7 +2,9 @@ package com.a2valdez.ulp_lab3_practico_3.model;
 
 import androidx.annotation.NonNull;
 
-public class Usuario {
+import java.io.Serializable;
+
+public class Usuario implements Serializable {
     private long dni;
     private String apellido;
     private String nombre;

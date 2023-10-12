@@ -93,7 +93,33 @@ public class RegistroActivityViewModel extends AndroidViewModel {
         context.startActivity(intent);
     }
 
-    public void respuestaCamara(int requestCode, int resultCode, @Nullable Intent data, int REQUEST_IMAGE_CAPTURE, Usuario usuarioActual){
+    public void respuestaCamara(int requestCode, int resultCode, @Nullable Intent data, int REQUEST_IMAGE_CAPTURE){
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            //Recupero los datos provenientes de la camara.
+            Bundle extras = data.getExtras();
+            //Casteo a bitmap lo obtenido de la camara.
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+
+            //Rutina para convertir a un arreglo de byte los datos de la imagen
+            byte [] b = baos.toByteArray();
+
+            File archivo = conectarFoto(context.getFilesDir());
+
+            try{
+                FileOutputStream fos = new FileOutputStream(archivo);
+                BufferedOutputStream bos = new BufferedOutputStream(fos);
+                bos.write(b);
+                bos.flush();
+                bos.close();
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+            mFoto.setValue(imageBitmap);
+        }
+        /*
         if( requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK){
             Bundle extras = data.getExtras();
             Bitmap bitmap = (Bitmap) extras.get("data");
@@ -123,5 +149,13 @@ public class RegistroActivityViewModel extends AndroidViewModel {
                 e.printStackTrace();
             }
         }
+         */
+    }
+
+    private File conectarFoto(File dir) {
+        if (foto == null) {
+            foto = new File(dir, "foto.jpg");
+        }
+        return foto;
     }
 }
