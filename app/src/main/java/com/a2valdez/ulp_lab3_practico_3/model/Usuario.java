@@ -18,7 +18,7 @@ public class Usuario implements Serializable {
         this.nombre = nombre;
         this.mail = mail;
         this.password = password;
-        this.foto = dni+".png";
+        this.foto = "foto.png";
     }
 
     public Usuario(){}

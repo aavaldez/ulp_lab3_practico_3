@@ -61,6 +61,45 @@ public class RegistroActivityViewModel extends AndroidViewModel {
         }
     }
 
+    public void GuardarUsuario(String dni, String apellido, String nombre, String email, String password){
+        Usuario u = new Usuario(Long.parseLong(dni), apellido, nombre, email, password);
+        ApiClient.guardar(context, u);
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
+
+    public void respuestaCamara(int requestCode, int resultCode, @Nullable Intent data, int REQUEST_IMAGE_CAPTURE){
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            //Recupero los datos provenientes de la camara.
+            Bundle extras = data.getExtras();
+            //Casteo a bitmap lo obtenido de la camara.
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+
+            //Rutina para convertir a un arreglo de byte los datos de la imagen
+            byte [] b = baos.toByteArray();
+
+            File archivo = new File(context.getFilesDir(), "foto.png");
+            if(archivo.exists()){
+                archivo.delete();
+            }
+
+            try{
+                FileOutputStream fos = new FileOutputStream(archivo);
+                BufferedOutputStream bos = new BufferedOutputStream(fos);
+                bos.write(b);
+                bos.flush();
+                bos.close();
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+            mFoto.setValue(imageBitmap);
+        }
+    }
+
     public void LeerFoto(String nombre){
         File archivo = new File(context.getFilesDir(), nombre);
 
@@ -83,79 +122,5 @@ public class RegistroActivityViewModel extends AndroidViewModel {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public void GuardarUsuario(String dni, String apellido, String nombre, String email, String password){
-        Usuario u = new Usuario(Long.parseLong(dni), apellido, nombre, email, password);
-        ApiClient.guardar(context, u);
-        Intent intent = new Intent(context, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
-    }
-
-    public void respuestaCamara(int requestCode, int resultCode, @Nullable Intent data, int REQUEST_IMAGE_CAPTURE){
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            //Recupero los datos provenientes de la camara.
-            Bundle extras = data.getExtras();
-            //Casteo a bitmap lo obtenido de la camara.
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-
-            //Rutina para convertir a un arreglo de byte los datos de la imagen
-            byte [] b = baos.toByteArray();
-
-            File archivo = conectarFoto(context.getFilesDir());
-
-            try{
-                FileOutputStream fos = new FileOutputStream(archivo);
-                BufferedOutputStream bos = new BufferedOutputStream(fos);
-                bos.write(b);
-                bos.flush();
-                bos.close();
-            } catch (IOException e){
-                e.printStackTrace();
-            }
-            mFoto.setValue(imageBitmap);
-        }
-        /*
-        if( requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK){
-            Bundle extras = data.getExtras();
-            Bitmap bitmap = (Bitmap) extras.get("data");
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-            mFoto.setValue(bitmap);
-
-            byte [] b = baos.toByteArray();
-
-            File archivo = new File(context.getFilesDir(), usuarioActual.getDni()+".png");
-            usuarioActual.setFoto(usuarioActual.getDni()+".png");
-            if(archivo.exists()){
-                archivo.delete();
-            }
-
-            try{
-                FileOutputStream fos = new FileOutputStream(archivo);
-                BufferedOutputStream bos = new BufferedOutputStream(fos);
-                //ObjectOutputStream ous = new ObjectOutputStream(bos);
-                bos.write(b);
-                bos.flush();
-                bos.close();
-            } catch (FileNotFoundException e){
-                e.printStackTrace();
-            } catch (IOException e){
-                e.printStackTrace();
-            }
-        }
-         */
-    }
-
-    private File conectarFoto(File dir) {
-        if (foto == null) {
-            foto = new File(dir, "foto.jpg");
-        }
-        return foto;
     }
 }

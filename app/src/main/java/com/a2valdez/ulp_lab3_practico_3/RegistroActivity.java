@@ -41,8 +41,7 @@ public class RegistroActivity extends AppCompatActivity {
                     binding.etNombre.setText(usuario.getNombre());
                     binding.etMail.setText(usuario.getMail());
                     binding.etPassword.setText(usuario.getPassword());
-                    usuarioActual = usuario;
-                    mv.LeerFoto(usuarioActual.getFoto());
+                    mv.LeerFoto(usuario.getFoto());
                 }
             }
         });
@@ -60,7 +59,8 @@ public class RegistroActivity extends AppCompatActivity {
                         binding.etApellido.getText().toString(),
                         binding.etNombre.getText().toString(),
                         binding.etMail.getText().toString(),
-                        binding.etPassword.getText().toString()                );
+                        binding.etPassword.getText().toString()                )
+                ;
             }
         });
 
@@ -76,9 +76,9 @@ public class RegistroActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.d("salida", "Saco foto");
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                //if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
                     startActivityForResult(takePictureIntent, 1);
-                }
+                //}
             }
         });
     }
